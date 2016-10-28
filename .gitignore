@@ -1,0 +1,11 @@
+*.pem
+node_modules
+public/assets/js/app
+typings
+client/**/*.js
+client/**/*.js.map
+.env
+.virgilpass
+.virgilkey
+.virgilcard
+.vkeys
