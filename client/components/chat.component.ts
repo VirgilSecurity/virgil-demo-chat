@@ -174,7 +174,7 @@ export class ChatComponent implements OnInit {
         this.channelMembers.forEach(m => {
              recipients.push(m.publicKey);
         });
-                
+
         let message = {
             body: messageString,
             date: Date.now(),
@@ -182,14 +182,15 @@ export class ChatComponent implements OnInit {
             id: this.generateUUID()
         };
 
-        let messageBuf = new Buffer(JSON.stringify(message));
-
         this.newMessage = '';
         this.messages.push(message);
-        
-        let encryptedMessage = this.virgil.crypto.encrypt(messageBuf, recipients);
 
-        this.currentChannel.sendMessage(encryptedMessage.toString('base64'));
+        let messageBuf = new Buffer(messageString);
+        let encryptedMessage = _.assign({}, message, {
+            body: this.virgil.crypto.encrypt(messageBuf, recipients)
+        });
+
+        this.currentChannel.sendMessage(encryptedMessage);
     }
     
     /**
@@ -214,12 +215,13 @@ export class ChatComponent implements OnInit {
      * Fired when a new Message has been added to the Channel.
      */
     private onMessageAdded(message: any): void {
+        debugger;
         let privateKey = this.account.current.privateKey;
-
         let encryptedBuffer = new Buffer(message.body, "base64");
-        let decryptedMessage = this.virgil.crypto.decrypt(encryptedBuffer, privateKey).toString('utf8');
 
-        var messageObject = JSON.parse(decryptedMessage);
+        var messageObject: any = _.assign({}, message, {
+            body: this.virgil.crypto.decrypt(encryptedBuffer, privateKey).toString('utf8')
+        });
         
         if (_.some(this.messages, m => m.id == messageObject.id)){
             return;

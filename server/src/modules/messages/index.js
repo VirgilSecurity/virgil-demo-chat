@@ -3,12 +3,14 @@ var uuid = require('uuid');
 var dynamodb = require('../../providers/dynamodb');
 
 module.exports = {
-	create: function create (params) {
+	create: function create (msg) {
 		return new Promise(function (resolve, reject) {
-			params.id = uuid.v4();
-			params.created_at = Date.now();
-
-			console.log(params);
+			var params = {
+				id: uuid.v4(),
+				date: Date.now(),
+				author: msg.author,
+				body: msg.body
+			};
 
 			dynamodb
 				.table('Messages')
@@ -18,7 +20,7 @@ module.exports = {
 						return;
 					}
 
-					resolve(data);
+					resolve(params);
 				});
 		});
 	},

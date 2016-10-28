@@ -61,8 +61,8 @@ export class Channel {
         return Promise.resolve(this.members);
     }
     
-    sendMessage (data: string) {
-        this.socket.emit('newMessage', data);
+    sendMessage (msg: any) {
+        this.socket.emit('newMessage', msg);
     }
 
     on (eventName: string, callback: (any) => void) {

@@ -1,5 +1,6 @@
 require('dotenv').config();
 var fs = require('fs');
+var path = require('path');
 var bodyParser = require('body-parser');
 var express = require('express');
 var app = express();
@@ -7,7 +8,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var registerRoute = require('./src/routes/register');
 var virgilConfigRoute = require('./src/routes/virgil-config');
-var path = require('path');
+var messageService = require('./src/modules/messages');
 
 var rootDir = path.resolve(__dirname + '/../');
 
@@ -30,10 +31,10 @@ io.on('connection', function (socket) {
     var addedUser = false;
 
     // when the client emits 'new message', this listens and executes
-    socket.on('newMessage', function (data) {
-        // we tell the client to execute 'messageAdded'
-        socket.broadcast.emit('messageAdded', {
-            body: data
+    socket.on('newMessage', function (params) {
+        messageService.create(params).then(function (message) {
+            // we tell the client to execute 'messageAdded'
+            socket.broadcast.emit('messageAdded', message);
         });
     });
 
