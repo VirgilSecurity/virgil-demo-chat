@@ -170,13 +170,6 @@ export class ChatComponent implements OnInit {
         
         let messageString = this.newMessage;
         let recipients = [];
-                
-        if (this.currentChannel.attributes.virgil_public_key) {
-            var adminPubkey = this.virgil.crypto.importPublicKey(
-                new Buffer(this.currentChannel.attributes.virgil_public_key, 'base64')
-            );
-            recipients.push(adminPubkey);
-        }
         
         this.channelMembers.forEach(m => {
              recipients.push(m.publicKey);
