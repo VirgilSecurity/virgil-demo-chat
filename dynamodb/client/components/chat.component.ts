@@ -187,7 +187,7 @@ export class ChatComponent implements OnInit {
 
         let messageBuf = new Buffer(messageString);
         let encryptedMessage = _.assign({}, message, {
-            body: this.virgil.crypto.encrypt(messageBuf, recipients)
+            body: this.virgil.crypto.encrypt(messageBuf, recipients).toString('base64')
         });
 
         this.currentChannel.sendMessage(encryptedMessage);
@@ -215,7 +215,6 @@ export class ChatComponent implements OnInit {
      * Fired when a new Message has been added to the Channel.
      */
     private onMessageAdded(message: any): void {
-        debugger;
         let privateKey = this.account.current.privateKey;
         let encryptedBuffer = new Buffer(message.body, "base64");
 
@@ -223,7 +222,7 @@ export class ChatComponent implements OnInit {
             body: this.virgil.crypto.decrypt(encryptedBuffer, privateKey).toString('utf8')
         });
         
-        if (_.some(this.messages, m => m.id == messageObject.id)){
+        if (_.some(this.messages, m => m.id == messageObject.id)) {
             return;
         }            
         
