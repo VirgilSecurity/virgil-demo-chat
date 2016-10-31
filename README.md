@@ -4,7 +4,7 @@ In this guide we’ll create a basic chat application using **Virgil** technolog
 
 ## Gather account information
 
-The first thing we need to do is grab all the necessary information from our Virgil Dev account. To initialize our *Virgil SDK* Client, we will need four values from our account:
+The first thing we need to do is grab all the necessary information from our Virgil Dev [account](#https://developer.virgilsecurity.com/dashboard/). To initialize our *Virgil SDK* Client, we will need four values from our account:
 
 
 | Variable Name                     | Description                    |
