@@ -13,24 +13,25 @@ function historyHandler (params) {
     var channelName = params.channelName;
 
     return Promise.all([
-        virgil.findCardByIdentity(identity),
-        messageService.queryByChannel(channelName)
+      virgil.findCardByIdentity(identity),
+      messageService.queryByChannel(channelName)
     ]).spread(function (recipientCard, messages) {
-        messages.forEach(function (msg) {
-          try {
-            var adminPrivateKey = virgil.crypto.importPrivateKey(new Buffer(config.app.channelAdminPrivateKey, 'base64'));
-            var decryptedBody = virgil.crypto.decrypt(msg.body, adminPrivateKey);
-            var recipientPubkey = virgil.crypto.importPublicKey(recipientCard.publicKey);
-            var reEncryptedBody = virgil.crypto.encrypt(decryptedBody, recipientPubkey);
+      var adminPrivateKey = virgil.crypto.importPrivateKey(
+        new Buffer(config.app.channelAdminPrivateKey, 'base64'));
 
-            msg.body = reEncryptedBody.toString('base64');
-          } catch (err) {
-            log.error(err);
-          }
+      messages.forEach(function (msg) {
+        var recipientPubkey = virgil.crypto.importPublicKey(recipientCard.publicKey);
+        var decryptedBody;
+        try {
+          decryptedBody = virgil.crypto.decrypt(msg.body, adminPrivateKey);
+          msg.body = virgil.crypto.encrypt(decryptedBody, recipientPubkey).toString('base64');
+        } catch (err) {
+          log.error(err);
+          msg.body = null;
+        }
+      });
 
-        });
-
-        return messages;
+      return messages.filter(function (msg) { return msg.body !== null; });
     });
 }
 
