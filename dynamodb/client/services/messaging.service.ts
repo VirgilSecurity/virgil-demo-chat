@@ -1,13 +1,21 @@
 import { Injectable } from '@angular/core'
+import { VirgilService } from './virgil.service';
 
 declare var io: any;
+declare var virgil: any;
 const channelNames = [ 'general' ];
+const adminPublicKeyRaw = new VirgilService.VirgilSDK.Buffer('MCowBQYDK2VwAyEARkfYKBTx+CONAJJWJFsPfpFVamgq03CuHKs8LPxZ8yc=', 'base64');
 
 @Injectable()
 export class MessagingService {
 
     private socket: any;
+    private adminPublicKey: any;
     public username: string;
+
+    constructor () {
+        this.adminPublicKey = VirgilService.Crypto.importPublicKey(adminPublicKeyRaw);
+    }
 
     initialize (username: string) {
         return new Promise((resolve, reject) => {
@@ -23,7 +31,8 @@ export class MessagingService {
     }
     
     getChannels (): Promise<Channel[]> {
-        return Promise.resolve(channelNames.map(channelName => new Channel(this.socket, this.username, channelName)));
+        return Promise.resolve(channelNames.map(
+            channelName => new Channel(this.socket, this.username, channelName, this.adminPublicKey)));
     }
 
 
@@ -35,11 +44,13 @@ export class Channel {
     
     public channelName:string;
     public sid:string;
+    public publicKey:any;
     
-    constructor(private socket:any, private username:string, channelName:string) {
+    constructor(private socket:any, private username:string, channelName:string, publicKey:any) {
         this.socket = socket;
         this.channelName = channelName;
         this.sid = this.socket.sid;
+        this.publicKey = publicKey;
     }
 
     get friendlyName(): string {

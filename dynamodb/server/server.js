@@ -1,4 +1,5 @@
-require('dotenv').config();
+require('dotenv').load();
+
 var fs = require('fs');
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -8,6 +9,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var registerRoute = require('./src/routes/register');
 var virgilConfigRoute = require('./src/routes/virgil-config');
+var historyRoute = require('./src/routes/history');
 var messageService = require('./src/modules/messages');
 
 var rootDir = path.resolve(__dirname + '/../');
@@ -24,6 +26,7 @@ app.get('/', function indexHandler(req, res) {
 
 app.use(virgilConfigRoute);
 app.use(registerRoute);
+app.use(historyRoute);
 
 var members = Object.create(null);
 

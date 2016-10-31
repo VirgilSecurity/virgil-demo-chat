@@ -1,6 +1,5 @@
 module.exports = {
     accessToken: process.env.VIRGIL_ACCESS_TOKEN,
-    appBundleId: process.env.VIRGIL_APP_BUNDLE_ID,
     options: {
         cardsBaseUrl: process.env.VIRGIL_CARDS_URL,
         cardsReadBaseUrl: process.env.VIRGIL_CARDS_READ_URL,

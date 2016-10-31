@@ -7,7 +7,7 @@ router.get('/virgil-config', controller(getToken));
 function getToken(params) {
     return { 
         virgil_token: config.virgil.accessToken,
-        virgil_app_bundle_id: config.virgil.appBundleId,
+        virgil_app_bundle_id: config.app.appBundleId,
         virgil_urls: config.virgil.options
     };
 }

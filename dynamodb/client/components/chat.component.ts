@@ -127,13 +127,13 @@ export class ChatComponent implements OnInit {
     public loadHistory(){
         
         let identity = this.account.current.identity;
-        let channelSid = this.currentChannel.sid;
+        let channelName = this.currentChannel.channelName;
         
         this.isChannelHistoryLoading = true;
                         
-        this.backend.getHistory(identity, channelSid).then(messages => {
+        this.backend.getHistory(identity, channelName).then(messages => {
             
-            let encryptedMessages = _.sortBy(messages, 'dateUpdated'); 
+            let encryptedMessages = _.sortBy(messages, 'dateCreated');
              _.forEach(encryptedMessages, m => this.onMessageAdded(m));  
              
             this.isChannelHistoryLoading = false;
@@ -170,21 +170,25 @@ export class ChatComponent implements OnInit {
         
         let messageString = this.newMessage;
         let recipients = [];
-        
+
+        if (this.currentChannel.publicKey) {
+            recipients.push(this.currentChannel.publicKey);
+        }
+
         this.channelMembers.forEach(m => {
              recipients.push(m.publicKey);
         });
 
         let message = {
             body: messageString,
-            date: Date.now(),
+            dateCreated: Date.now(),
             author: this.account.current.identity,
-            id: this.generateUUID()
+            channelName: this.currentChannel.channelName
         };
 
         this.newMessage = '';
         this.messages.push(message);
-
+``
         let messageBuf = new Buffer(messageString);
         let encryptedMessage = _.assign({}, message, {
             body: this.virgil.crypto.encrypt(messageBuf, recipients).toString('base64')
@@ -222,7 +226,7 @@ export class ChatComponent implements OnInit {
             body: this.virgil.crypto.decrypt(encryptedBuffer, privateKey).toString('utf8')
         });
         
-        if (_.some(this.messages, m => m.id == messageObject.id)) {
+        if (_.some(this.messages, m => m.id && m.id == messageObject.id)) {
             return;
         }            
         
@@ -272,12 +276,5 @@ export class ChatComponent implements OnInit {
         this.cd.detectChanges();    
         
         console.error(error);    
-    }
-
-    private generateUUID() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-            return v.toString(16);
-        });
     }
 }

@@ -1,11 +1,24 @@
+var _ = require('lodash');
 var virgil = require('virgil-sdk');
 var config = require('../config');
 
 var client = virgil.client(config.virgil.accessToken, config.virgil.options);
 
 module.exports = {
-    registerVirgilCard: registerVirgilCard
+    crypto: virgil.crypto,
+    registerVirgilCard: registerVirgilCard,
+    findCardByIdentity: findCardByIdentity
 };
+
+function findCardByIdentity (identity) {
+    return client.searchCards({
+        identities: [identity],
+        identity_type: 'chat_member'
+    }).then(function (cards) {
+        var last = _.last(_.sortBy(cards, 'createdAt'));
+        return last;
+    });
+}
 
 function registerVirgilCard (params) {
     var cardCreateRequest = virgil.cardCreateRequest.fromTransferFormat(params);

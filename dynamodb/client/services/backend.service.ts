@@ -35,8 +35,8 @@ export class BackendService {
     /**
      * Gets decrypted history with current account's private key.
      */
-    public getHistory(identity:string, channelSid: string): Promise<any> {
-        return this.http.get(`/history?identity=${identity}&channelSid=${channelSid}`)
+    public getHistory(identity:string, channelName: string): Promise<any> {
+        return this.http.get(`/history?identity=${identity}&channelName=${channelName}`)
             .toPromise().then(r => this.verifyAndMapToJson(r));   
     }
 
