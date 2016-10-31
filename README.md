@@ -1,120 +1,20 @@
-## Join channel
+# Virgil Demo Chat
 
-Join to channel using specified identifier.
-After joining user will remain active in channel until manual `leave` request
+In this guide we’ll create a basic chat application using **Virgil** technologies stack for end-to-end encryption.
 
-#### Request
+## Gather account information
 
-```
-POST /channels/{channel_name}/join
-```
+The first thing we need to do is grab all the necessary information from our Virgil Dev [account](https://developer.virgilsecurity.com/dashboard/):
 
-```json
-{
-	"identifier": "user@example.com"
-}
-```
 
-#### Response
+| Variable Name                     | Description                    |
+|-----------------------------------|--------------------------------|
+| APP_ID                            | The APP_ID uniquely identifies your application in our services, it is also used to identify the Public key generated in a pair with ``appKey`` |
+| APP_KEY_PATH               | The path to your Private Key(*.virgilkey) file, you generated for your application  |
+| APP_KEY_PASSWORD   | The application's Private Key password.  |
+| ACCESS_TOKEN               | The access token provides authenticated secure access to Virgil Keys Services and is passed with each API call. The access token also allows the API to associate your app’s requests with your Virgil developer's account. |
 
-```
-{
-	"identity_token": "123yatoken456"
-}
-```
 
-## Get list of channel members
 
-#### Request
 
-```
-GET /channels/{channel_name}/members
-```
 
-#### Request Headers
-
-```
-X-IDENTITY-TOKEN: IDENTITY_TOKEN
-```
-
-#### Response
-
-```json
-[
-	{
-		"identifier": "member1@example.com"
-	},
-	{
-		"identifier": "member2@example.com"
-	}
-]
-```
-
-## Post message to channel
-
-Messages are JSON objects with strict structure
-
-#### Request
-
-```
-POST /channels/{channel_name}/messages
-```
-
-You can use any message structure (any property names and any number of properties except `id` and `created_at`).
-Message body example:
-
-```json
-{
-	"message": "This is message"
-}
-```
-
-#### Request Headers
-
-```
-X-IDENTITY-TOKEN: IDENTITY_TOKEN
-```
-
-#### Response
-
-```
-```
-
-## Get channel messages
-
-#### Request
-
-```
-GET /channels/{channel_name}/messages?last_message_id=10032
-```
-
-##### Params
-	
-- `last_message_id` - will return messages after specified id
-
-#### Request Headers
-
-```
-X-IDENTITY-TOKEN: IDENTITY_TOKEN
-```
-
-#### Response
-
-```json
-[
-	{
-		"id": 123,
-		"created_at": 2318893224,
-		"sender_identifier": "user@example.com",
-		"message": "some message content"
-	},
-	{
-		"id": 127,
-		"created_at": 2318893624,
-		"sender_identifier": "user2@example.com",
-		"message": "some message content"
-	}
-]
-```
-
-- `created_at` - unix timestamp
