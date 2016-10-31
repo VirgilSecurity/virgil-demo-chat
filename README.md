@@ -12,7 +12,7 @@ The first thing we need to do is grab all the necessary information from our Vir
 | APP_ID                            | The APP_ID uniquely identifies your application in our services, it is also used to identify the Public key generated in a pair with ``appKey`` |
 | APP_KEY_PATH               | The path to your Private Key(*.virgilkey) file, you generated for your application  |
 | APP_KEY_PASSWORD   | The application's Private Key password.  |
-| ACCESS_TOKEN               | The access token provides authenticated secure access to Virgil Keys Services and is passed with each API call. The access token also allows the API to associate your app’s requests with your Virgil Security developer's account. |
+| ACCESS_TOKEN               | The access token provides authenticated secure access to Virgil Keys Services and is passed with each API call. The access token also allows the API to associate your app’s requests with your Virgil developer's account. |
 
 
 
