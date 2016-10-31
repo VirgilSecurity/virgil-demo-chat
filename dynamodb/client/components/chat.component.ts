@@ -21,153 +21,153 @@ const Buffer = VirgilService.VirgilSDK.Buffer;
     directives: [
         NgClass,
         TooltipDirective,
-        ModalTriggerDirective, 
+        ModalTriggerDirective,
         ScrollIntoViewDirective,
         SidebarDirective
     ],
     pipes: [FromNowPipe]
 })
 export class ChatComponent implements OnInit {
-    
+
     @Input() public logout: Function;
-    
+
     public messages = [];
-    public channels = [];    
-    public channelMembers = [];        
-    public currentChannel: any;    
-    
+    public channels = [];
+    public channelMembers = [];
+    public currentChannel: any;
+
     public isChannelsLoading:boolean = false;
     public isChannelHistoryLoading: boolean = false;
-    
+
     public newChannelName: string;
     public includeChannelHistory: boolean = true;
     public newMessage: string;
     public createChannel: Function;
-    
+
     private memberJoinedHandler: any;
     private memberLeftHandler: any;
     private messageAddedHandler: any;
-    
+
     constructor (
         public account: AccountService,
         private messaging: MessagingService,
-        private backend: BackendService,        
+        private backend: BackendService,
         private virgil: VirgilService,
         private cd: ChangeDetectorRef) {
 
         this.createChannel = _.noop;
     }
-    
+
     public ngOnInit() {
         this.loadChannels();
     }
-    
+
     /**
      * Deletes current channel.
      */
-    public deleteChannel():void {     
-        
-        _.remove(this.channels, ch => ch.sid == this.currentChannel.sid);                    
-        this.currentChannel.delete();    
-        this.currentChannel = null;           
-        
-        this.cd.detectChanges();        
+    public deleteChannel():void {
+
+        _.remove(this.channels, ch => ch.sid == this.currentChannel.sid);
+        this.currentChannel.delete();
+        this.currentChannel = null;
+
+        this.cd.detectChanges();
     }
-        
+
     /**
      * Sets the current channel for chatting.
      */
     public setCurrentChannel(channel: any){
-        
+
         if (channel == this.currentChannel) {
             return;
-        }        
-        
+        }
+
         console.log("Channel Selected", channel);
-        
-        this.channelMembers = [];        
+
+        this.channelMembers = [];
         this.messages = [];
-        
+
         this.currentChannel = channel;
         this.currentChannel.historyLoaded = false;
         this.cd.detectChanges();
-                
+
         this.initializeChannel(channel);
     }
-    
+
     /**
      * Initializes the currently selected channel.
      */
     public initializeChannel(channel: any){
-                        
+
         this.memberJoinedHandler = this.onMemberJoined.bind(this);
         this.memberLeftHandler = this.onMemberLeft.bind(this);
         this.messageAddedHandler = this.onMessageAdded.bind(this);
-        
-        channel.join().then(() => {                
-             
-            // subscribe for channel events.            
+
+        channel.join().then(() => {
+
+            // subscribe for channel events.
             channel.on('memberJoined', this.memberJoinedHandler);
             channel.on('memberLeft', this.memberLeftHandler);
             channel.on('messageAdded', this.messageAddedHandler);
-                    
-            // load channel members.        
+
+            // load channel members.
             return channel.getMembers();
-        }).then((members) => {                
-            return Promise.all(members.map(m => this.addMember(m)));            
+        }).then((members) => {
+            return Promise.all(members.map(m => this.addMember(m)));
         }).then(() => {
-             this.cd.detectChanges();           
+             this.cd.detectChanges();
         })
-        .catch(error => this.handleError(error));        
+        .catch(error => this.handleError(error));
     }
-    
+
     /**
      * Loads history from backend service.
      */
     public loadHistory(){
-        
+
         let identity = this.account.current.identity;
         let channelName = this.currentChannel.channelName;
-        
+
         this.isChannelHistoryLoading = true;
-                        
+
         this.backend.getHistory(identity, channelName).then(messages => {
-            
+
             let encryptedMessages = _.sortBy(messages, 'dateCreated');
-             _.forEach(encryptedMessages, m => this.onMessageAdded(m));  
-             
+             _.forEach(encryptedMessages, m => this.onMessageAdded(m));
+
             this.isChannelHistoryLoading = false;
             this.currentChannel.historyLoaded = true;
-            
+
             this.cd.detectChanges();
         })
         .catch(error => this.handleError(error));
     }
-            
+
     /**
      * Loads the current list of all Channels the Client knows about.
      */
     private loadChannels(): void{
-        
-        this.isChannelsLoading = true; 
+
+        this.isChannelsLoading = true;
         this.cd.detectChanges();
 
         this.messaging.getChannels().then(channels => {
             channels.forEach(channel => {
-                this.onChannelAdded(channel);                        
-            });  
-                                    
+                this.onChannelAdded(channel);
+            });
+
             this.isChannelsLoading = false;
-            this.cd.detectChanges();     
+            this.cd.detectChanges();
         })
-        .catch(this.handleError);     
+        .catch(this.handleError);
     }
-    
+
     /**
      * Encrypts & posts the new message to current channel.
      */
     public postMessage(): void {
-        
+
         let messageString = this.newMessage;
         let recipients = [];
 
@@ -188,7 +188,7 @@ export class ChatComponent implements OnInit {
 
         this.newMessage = '';
         this.messages.push(message);
-``
+
         let messageBuf = new Buffer(messageString);
         let encryptedMessage = _.assign({}, message, {
             body: this.virgil.crypto.encrypt(messageBuf, recipients).toString('base64')
@@ -196,25 +196,25 @@ export class ChatComponent implements OnInit {
 
         this.currentChannel.sendMessage(encryptedMessage);
     }
-    
+
     /**
      * Loads the member's public key and the member to the current member collection.
      */
-    private addMember(member):Promise<any> {             
+    private addMember(member):Promise<any> {
         return this.virgil.client.searchCards({
             identities: [ member.identity ],
-            type: 'chat_member' 
+            type: 'chat_member'
         }).then(result => {
             let latestCard: any = _.last(_.sortBy(result, 'createdAt'));
             if (latestCard){
                 member.publicKey = this.virgil.crypto.importPublicKey(latestCard.publicKey);
             }
-            
+
             this.channelMembers.push(member);
             return member;
         });
     }
-    
+
     /**
      * Fired when a new Message has been added to the Channel.
      */
@@ -225,56 +225,56 @@ export class ChatComponent implements OnInit {
         var messageObject: any = _.assign({}, message, {
             body: this.virgil.crypto.decrypt(encryptedBuffer, privateKey).toString('utf8')
         });
-        
+
         if (_.some(this.messages, m => m.id && m.id == messageObject.id)) {
             return;
-        }            
-        
+        }
+
         console.log('Encrypted Message Received', message);
-        
+
         this.messages.push(messageObject);
         this.cd.detectChanges();
-    }    
-    
+    }
+
     /**
-     * Fired when a Member has joined the Channel. 
+     * Fired when a Member has joined the Channel.
      */
-    private onMemberJoined(member: any): void{        
+    private onMemberJoined(member: any): void{
         this.addMember(member).then(() => {
             this.cd.detectChanges();
         });
     }
-    
+
     /**
      * Fired when a Member has left the Channel.
      */
-    private onMemberLeft(member: any): void{    
+    private onMemberLeft(member: any): void{
         _.remove(this.channelMembers, m => m.sid == member.sid);
-        this.cd.detectChanges();         
+        this.cd.detectChanges();
     }
-    
+
     /**
      * Fired when a Channel becomes visible to the Client.
      */
     private onChannelAdded(channel:any): void{
-        
+
         if (_.some(this.channels, c => c.sid == channel.sid)){
-            return;            
+            return;
         }
-        
+
         this.channels.push(channel);
-        this.cd.detectChanges();    
+        this.cd.detectChanges();
     }
 
-    
+
     /**
      * Handles an chat errors.
      */
-    private handleError(error): void{     
+    private handleError(error): void{
         this.isChannelHistoryLoading = false;
         this.isChannelsLoading = false;
-        this.cd.detectChanges();    
-        
-        console.error(error);    
+        this.cd.detectChanges();
+
+        console.error(error);
     }
 }
