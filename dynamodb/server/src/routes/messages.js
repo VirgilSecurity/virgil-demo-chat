@@ -16,22 +16,21 @@ function historyHandler (params) {
       virgil.findCardByIdentity(identity),
       messageService.queryByChannel(channelName)
     ]).spread(function (recipientCard, messages) {
-      var adminPrivateKey = virgil.crypto.importPrivateKey(
-        new Buffer(config.app.channelAdminPrivateKey, 'base64'));
+      var adminPrivateKey = virgil.crypto.importPrivateKey(new Buffer(config.app.channelAdminPrivateKey, 'base64'));
+      var recipientPubkey = virgil.crypto.importPublicKey(recipientCard.publicKey);
 
       messages.forEach(function (msg) {
-        var recipientPubkey = virgil.crypto.importPublicKey(recipientCard.publicKey);
         var decryptedBody;
         try {
           decryptedBody = virgil.crypto.decrypt(msg.body, adminPrivateKey);
-          msg.body = virgil.crypto.encrypt(decryptedBody, recipientPubkey).toString('base64');
         } catch (err) {
           log.error(err);
-          msg.body = null;
+          decryptedBody = new Buffer('Unable to decrypt...');
         }
+        msg.body = virgil.crypto.encrypt(decryptedBody, recipientPubkey).toString('base64');
       });
 
-      return messages.filter(function (msg) { return msg.body !== null; });
+      return messages;
     });
 }
 
