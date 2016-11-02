@@ -11,7 +11,7 @@ export class VirgilService {
     initialize(accessToken: string, options: any) {
         this.client = virgil.client(accessToken, options);
         this.crypto = virgil.crypto;
-        // this.client.setCardValidator(virgil.cardValidator(virgil.crypto));
+        this.client.setCardValidator(virgil.cardValidator(virgil.crypto));
     }
 
     public static get VirgilSDK(): any {

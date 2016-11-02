@@ -5,6 +5,7 @@ typings
 client/**/*.js
 client/**/*.js.map
 .env
+npm-debug.log
 .virgilpass
 .virgilkey
 .virgilcard

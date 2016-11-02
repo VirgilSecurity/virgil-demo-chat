@@ -1,5 +1,5 @@
 {
-  "name": "virgil-ip-messaging",
+  "name": "virgil-demo-chat",
   "version": "0.0.0",
   "author": "Virgil Security Inc. <support@virgilsecurity.com>",
   "description": "Web chat app with E2EE",
