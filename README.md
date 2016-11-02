@@ -23,7 +23,7 @@ $ cp ./server/.env.example ./server/.env
 ```
 Set Virgil & AWS environment variables declared in `.env` file.
 
-### Gather Virgil APP information
+### Gather Virgil App information
 
 The first thing we need to do is grab all the necessary information from our Virgil Dev [account](https://developer.virgilsecurity.com/dashboard/):
 
