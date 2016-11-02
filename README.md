@@ -31,9 +31,9 @@ The first thing we need to do is grab all the necessary information from our Vir
 | Variable Name                     | Description                    |
 |-----------------------------------|--------------------------------|
 | VIRGIL_APP_ID                            | The APP_ID uniquely identifies your application in our services, it is also used to identify the Public key generated in a pair with ``appKey`` |
-| VIRGIL_APP_KEY_PATH               | The path to your Private key (*.virgilkey) file, you generated for your application  |
-| VIRGIL_APP_KEY_PASSWORD   | The application's Private key password.  |
-| VIRGIL_APP_ACCESS_TOKEN               | The access token is a unique string value that provides an authenticated secure access to the Virgil services and is passed with each API call. The accessToken also allows the API to associate your requests with your application and Virgil developer’s account.. |
+| VIRGIL_APP_KEY               | The path to your Private key (*.virgilkey) file, you generated for your application  |
+| VIRGIL_APP_KEY_PWD   | The application's Private key password.  |
+| VIRGIL_APP_ACCESS_TOKEN               | The access token is a unique string value that provides an authenticated secure access to the Virgil services and is passed with each API call. The access token also allows the API to associate app's requests with Virgil developer’s account.. |
 
 
 
