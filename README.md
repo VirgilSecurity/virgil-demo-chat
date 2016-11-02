@@ -2,7 +2,26 @@
 
 In this guide we’ll create a basic chat application using **Virgil** technologies stack for end-to-end encryption.
 
-## Gather account information
+## Publish
+
+There are only few steps required to setup Virgil History service :)
+
+```
+$ git clone https://github.com/VirgilSecurity/virgil-demo-chat.git
+$ cd ./virgil-demo-chat/dynamodb
+
+$ npm install
+$ npm start
+```
+
+Use url [http://localhost:8090](http://localhost:8090) to open your Demo Chat
+
+## Configuration
+
+```
+$ cp ./server/.env.example ./server/.env
+```
+Set Virgil & AWS environment variables declared in `.env` file.
 
 The first thing we need to do is grab all the necessary information from our Virgil Dev [account](https://developer.virgilsecurity.com/dashboard/):
 
