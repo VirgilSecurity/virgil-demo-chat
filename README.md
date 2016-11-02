@@ -36,7 +36,12 @@ The first thing we need to do is grab all the necessary information from our Vir
 | VIRGIL_APP_ACCESS_TOKEN               | The access token is a unique string value that provides an authenticated secure access to the Virgil services and is passed with each API call. The access token also allows the API to associate app's requests with Virgil developer’s account.. |
 | VIRGIL_APP_BUNDLE_ID | The application name within Virgil services |
 
+### Gather AWS DynamoDB information
 
+| Variable Name                     | Description                    |
+|-----------------------------------|--------------------------------|
+| AWS_ACCESS_KEY_ID                 |  |
+| AWS_SECRET_ACCESS_KEY             |  |
 
 
 
