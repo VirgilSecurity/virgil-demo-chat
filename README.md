@@ -37,11 +37,18 @@ The first thing we need to do is grab all the necessary information from our Vir
 | VIRGIL_APP_BUNDLE_ID | The application name within Virgil services |
 
 ### Gather AWS DynamoDB information
+Set the security credentials are used to authenticate and authorize calls that you make to AWS:
 
 | Variable Name                     | Description                    |
 |-----------------------------------|--------------------------------|
-| AWS_ACCESS_KEY_ID                 |  |
-| AWS_SECRET_ACCESS_KEY             |  |
+| AWS_ACCESS_KEY_ID                 | The access key identifier  |
+| AWS_SECRET_ACCESS_KEY             | The secret access key used to sign programmatic requests that you make to AWS  |
+
+### Configure DynamoDB tables
+Create manually table ``Messages`` in AWS console.
+
+
+
 
 
 
