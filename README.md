@@ -44,8 +44,11 @@ Set the security credentials are used to authenticate and authorize calls that y
 | AWS_ACCESS_KEY_ID                 | The access key identifier  |
 | AWS_SECRET_ACCESS_KEY             | The secret access key used to sign programmatic requests that you make to AWS  |
 
-### Configure DynamoDB tables
-Create manually table ``Messages`` in AWS console.
+### Configure DynamoDB table
+Create DynamoDB table `Messages` with `id` attribute of type `String` as **Primary key**, no sort key needed. Then create a GlobalSecondaryIndex on your new table with `channelName` attribute of type `String` as **Partition key** and `dateCreated` attribute of type `Number` as **Sort key**. Set **Projrcted attributes** to `All`. Name your index *channelName-dateCreated-index*.
+
+<img width="100%" src="https://github.com/VirgilSecurity/virgil-demo-chat/blob/master/dynamodb/public/assets/img/indexes-screen.png" align="center" hspace="10" vspace="6">
+
 
 
 
