@@ -21,7 +21,7 @@ function findCardByIdentity (identity) {
 }
 
 function registerVirgilCard (params) {
-    var cardCreateRequest = virgil.cardCreateRequest.fromTransferFormat(params);
+    var cardCreateRequest = virgil.cardCreateRequest.import(params);
     var signer = virgil.requestSigner(virgil.crypto);
     var appPrivateKey = virgil.crypto.importPrivateKey(
         new Buffer(config.app.privateKey, 'base64'),
