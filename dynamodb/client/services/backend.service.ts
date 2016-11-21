@@ -6,11 +6,11 @@ const Buffer = VirgilService.VirgilSDK.Buffer;
 
 @Injectable()
 export class BackendService {
-        
+
     private appPublicKey: Object;
-        
+
     constructor(private http: Http, private virgilService: VirgilService) {}
-    
+
     /**
      * Gets a validation token for Virgil services.
      */
@@ -20,7 +20,7 @@ export class BackendService {
         let options = new RequestOptions({ headers: headers });
 
         return this.http.post("/auth/login", body, options)
-            .toPromise().then(r => this.verifyAndMapToJson(r));        
+            .toPromise().then(r => this.verifyAndMapToJson(r));
     }
 
     /**
@@ -29,15 +29,15 @@ export class BackendService {
     public getVirgilConfig(): Promise<any> {
         return this.http.get('/virgil-config')
             .toPromise()
-            .then(r => Promise.resolve(r.json()));   
+            .then(r => Promise.resolve(r.json()));
     }
-    
+
     /**
      * Gets decrypted history with current account's private key.
      */
     public getHistory(identity:string, channelName: string): Promise<any> {
         return this.http.get(`/history?identity=${identity}&channelName=${channelName}`)
-            .toPromise().then(r => this.verifyAndMapToJson(r));   
+            .toPromise().then(r => this.verifyAndMapToJson(r));
     }
 
     /**
@@ -48,14 +48,14 @@ export class BackendService {
     }
 
     /**
-     * Gets an application's Public Key. 
+     * Gets an application's Public Key.
      */
     public get AppPublicKey(): Object {
         return this.appPublicKey;
-    } 
-    
+    }
+
     public createVirgilCard(request: Object): Promise<any> {
-        return this.postJson('/register', request).then(this.verifyAndMapToJson.bind(this));
+        return this.postJson('/register', { card_request: request }).then(this.verifyAndMapToJson.bind(this));
     }
 
     private postJson(url: string, data: Object): Promise<any> {
@@ -84,7 +84,7 @@ export class BackendService {
         if (!isValid){
             throw "Response signature is not valid."
         }
-        
+
         return Promise.resolve(response.json());
     }
 }

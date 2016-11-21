@@ -112,7 +112,7 @@ export class AppComponent implements OnInit {
         let signer = VirgilService.VirgilSDK.requestSigner(this.virgil.crypto);
         signer.selfSign(request, keyPair.privateKey);
 
-        return this.backend.createVirgilCard(request)
+        return this.backend.createVirgilCard(request.export())
             .then((card) => {
                 return _.assign({}, card, keyPair);
             });
