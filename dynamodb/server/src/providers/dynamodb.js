@@ -5,4 +5,10 @@ var config = require('../config');
 
 aws.config.update(config.db);
 
-module.exports = new aws.DynamoDB.DocumentClient();
+module.exports = function createClient (tableName) {
+  return new aws.DynamoDB.DocumentClient({
+    params: {
+      TableName: tableName
+    }
+  });
+};
