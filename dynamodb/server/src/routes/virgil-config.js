@@ -1,15 +1,13 @@
 var config = require('../config');
 var router = require('express').Router();
-var controller = require('app-controller');
+var jwt = require('express-jwt');
 
-router.get('/virgil-config', controller(getToken));
+router.get('/virgil-config', jwt({ secret: process.env.JWT_SECRET }), getConfiguration);
 
-function getToken(params) {
-    return { 
-        virgil_token: config.virgil.accessToken,
-        virgil_app_bundle_id: config.app.appBundleId,
-        virgil_urls: config.virgil.options
-    };
+function getConfiguration(req, res) {
+  res.json({
+    virgil_token: config.virgil.accessToken
+  });
 }
 
 module.exports = router;
