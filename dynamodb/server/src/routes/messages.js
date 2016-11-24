@@ -1,36 +1,22 @@
-var Promise = require('bluebird');
 var router = require('express').Router();
-var controller = require('app-controller');
-var config = require('../config');
+var jwt = require('express-jwt');
 var virgil = require('../providers/virgil');
 var log = require('../providers/log');
-var messageService = require('../modules/messages');
+var messages = require('../modules/messages');
 
-router.get('/history', controller(historyHandler));
+router.get('/channels/:channel_id/messages', jwt({ secret: process.env.JWT_SECRET }), getMessages);
 
-function historyHandler (params) {
-    var identity = params.identity;
-    var channelName = params.channelName;
+function getMessages (req, res) {
+  var channelId = req.params.channel_id;
 
-    return Promise.all([
-      virgil.findCardByIdentity(identity),
-      messageService.queryByChannel(channelName)
-    ]).spread(function (recipientCard, messages) {
-      var adminPrivateKey = virgil.crypto.importPrivateKey(new Buffer(config.app.channelAdminPrivateKey, 'base64'));
-      var recipientPubkey = virgil.crypto.importPublicKey(recipientCard.publicKey);
+  // TODO check that requesting user is a member of given channel
 
-      messages.forEach(function (msg) {
-        var decryptedBody;
-        try {
-          decryptedBody = virgil.crypto.decrypt(msg.body, adminPrivateKey);
-        } catch (err) {
-          log.error(err);
-          decryptedBody = new Buffer('Unable to decrypt...');
-        }
-        msg.body = virgil.crypto.encrypt(decryptedBody, recipientPubkey).toString('base64');
-      });
-
-      return messages;
+  messages.queryByChannel(channelId)
+    .then(function (results) {
+      res.json(results);
+    })
+    .catch(function (err) {
+      res.status(400).json({ error: err.message });
     });
 }
 
