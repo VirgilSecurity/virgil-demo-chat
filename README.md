@@ -21,6 +21,20 @@ The first thing we need to do is grab all the necessary information from our Vir
 
 > TODO
 
+## Local development
+
+To run the server locally clone the repository switch to `dynamodb` directory and run the following commands:
+
+```shell
+npm install
+```
+
+```shell
+npm start
+```
+
+The server should now be listening on http://localhost:8090
+
 ## API Usage
 
 ## Authentication
