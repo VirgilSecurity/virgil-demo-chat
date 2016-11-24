@@ -95,7 +95,7 @@ GET /channels
   {
     "id": "aac9d92b-6a38-4785-b57f-b6ab46cf9108",
     "name": "random",
-    "dateCreated": 1479906682979
+    "dateCreated": 1479906682979,
     "members": ["5048e5d3-cea3-4f1e-bbc0-b66c74c4f37d","53dcee61-5ef2-4e62-8b99-bc82cef826d8"],
     "ownerId": "53dcee61-5ef2-4e62-8b99-bc82cef826d8",
     "ownerName": "vadmin",
@@ -104,6 +104,7 @@ GET /channels
   }
 ]
 ```
+- `dateCreated` - Unix timestamp
 
 ### Get channel by ID (requires authentication)
 
@@ -117,7 +118,7 @@ GET /channels/:channel_id
 {
   "id": "aac9d92b-6a38-4785-b57f-b6ab46cf9108",
   "name": "random",
-  "dateCreated": 1479906682979
+  "dateCreated": 1479906682979,
   "members": ["5048e5d3-cea3-4f1e-bbc0-b66c74c4f37d","53dcee61-5ef2-4e62-8b99-bc82cef826d8"],
   "ownerId": "53dcee61-5ef2-4e62-8b99-bc82cef826d8",
   "ownerName": "vadmin",
@@ -125,6 +126,7 @@ GET /channels/:channel_id
   "publicKey": "MCowBQYDK2VwAyEAqjMRGdW6XqzjreMdA6xDvLExKtzDH2ANB8XQBAlwjBg="
 }
 ```
+- `dateCreated` - Unix timestamp
 
 ### Create new channel (requires authentication)
 
@@ -148,7 +150,7 @@ POST /channels
 {
   "id": "aac9d92b-6a38-4785-b57f-b6ab46cf9108",
   "name": "random",
-  "dateCreated": 1479906682979
+  "dateCreated": 1479906682979,
   "members": ["5048e5d3-cea3-4f1e-bbc0-b66c74c4f37d","53dcee61-5ef2-4e62-8b99-bc82cef826d8"],
   "ownerId": "53dcee61-5ef2-4e62-8b99-bc82cef826d8",
   "ownerName": "vadmin",
@@ -156,6 +158,7 @@ POST /channels
   "publicKey": "MCowBQYDK2VwAyEAqjMRGdW6XqzjreMdA6xDvLExKtzDH2ANB8XQBAlwjBg="
 }
 ```
+- `dateCreated` - Unix timestamp
 
 ## Working with Messages
 
@@ -174,12 +177,15 @@ GET /channels/:channel_id/messages
   {
     "id": "744958df-4460-40a6-83f5-340ae67fc9e1",
     "author": "username",
-    "body": "Uar6bQNzJT87vToBXHOlQWamBpkYDbtV651pW/9rLAmsjPy4e0ZG4vIcakXUVFk0y4MkmXYZ/B6jdTkKJWryWQ==", // base64 encoding of encrypted body
-    "dateCreated": 1479919943234, // Unix timestamp
+    "body": "Uar6bQNzJT87vToBXHOlQWamBpkYDbtV651pW/9rLAmsjPy4e0ZG4vIcakXUVFk0y4MkmXYZ/B6jdTkKJWryWQ==",
+    "dateCreated": 1479919943234
     "channelId": "aab5d92b-6a38-4785-b57f-b6ab46cf9108"
   }
 ]
 ```
+
+- `dateCreated` - Unix timestamp
+- `body` - Base64 encoding of encrypted message body
 
 ## Working with Users
 
@@ -333,7 +339,7 @@ Payload:
 {
   "id": "53dcee61-5ef2-4e62-8b99-bc82cef826d9",
   "channelId": "676cfeab-5ef2-4e62-8b99-bc82cef826d8",
-  "author": "author_username"
+  "author": "author_username",
   "body": "X04+PC3Vde40YVr7dEgASee7wrSWOvYeXoAFYFghf/4o7yNA2QC5VRKild0LWNfpJgPKPjQGCS9wQ98xbvLclLku/ISPkr/D4Obnn4XFmfvjLWd74ABozrfpPaD+1oOwme/dnvWTPvnfOzsjsRbwiByOieWAMLGHWJ0JKlEfRts="
 }
 ```
