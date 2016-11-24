@@ -1,34 +1,19 @@
-var _ = require('lodash');
 var virgil = require('virgil-sdk');
 var config = require('../config');
 
-var client = virgil.client(config.virgil.accessToken, config.virgil.options);
+var client = virgil.client(config.virgil.accessToken);
 
 module.exports = {
     crypto: virgil.crypto,
-    registerVirgilCard: registerVirgilCard,
-    findCardByIdentity: findCardByIdentity
+    client: client,
+    createVirgilCard: createVirgilCard,
+    revokeVirgilCard: revokeVirgilCard
 };
 
-function findCardByIdentity (identity) {
-    return client.searchCards({
-        identities: [identity],
-        identity_type: 'chat_member'
-    }).then(function (cards) {
-        var last = _.last(_.sortBy(cards, 'createdAt'));
-        return last;
-    });
-}
+function createVirgilCard (request) {
+    var cardCreateRequest = virgil.createCardRequest.import(request);
 
-function registerVirgilCard (params) {
-    var cardCreateRequest = virgil.createCardRequest.import(params.card_request);
-    var signer = virgil.requestSigner(virgil.crypto);
-    var appPrivateKey = virgil.crypto.importPrivateKey(
-        new Buffer(config.app.privateKey, 'base64'),
-        config.app.privateKeyPassword
-    );
-
-    signer.authoritySign(cardCreateRequest, config.app.virgilCardId, appPrivateKey);
+    signWithAppKey(cardCreateRequest);
 
     return client.createCard(cardCreateRequest).then(function (card) {
         card.publicKey = card.publicKey.toString('base64');
@@ -38,4 +23,23 @@ function registerVirgilCard (params) {
         });
         return card;
     });
+}
+
+function revokeVirgilCard (request) {
+  var cardRevokeRequest = virgil.revokeCardRequest.import(request);
+
+  signWithAppKey(cardRevokeRequest);
+
+  return client.revokeCard(cardRevokeRequest);
+}
+
+function signWithAppKey (request) {
+  var signer = virgil.requestSigner(virgil.crypto);
+
+  var appPrivateKey = virgil.crypto.importPrivateKey(
+    new Buffer(config.app.privateKey, 'base64'),
+    config.app.privateKeyPassword
+  );
+
+  signer.authoritySign(request, config.app.virgilCardId, appPrivateKey);
 }
