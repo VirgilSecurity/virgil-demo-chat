@@ -1,63 +1,108 @@
+'use strict';
+
+var debug = require('debug')('virgil:chat');
+var escape = require('escape-html');
 var socketServer = require('socket.io');
-var messageService = require('../messages');
+var socketioJwt = require('socketio-jwt');
+
+var messages = require('../messages');
+var channels = require('../channels');
+var users = require('../users');
 
 function createChat (server) {
   var io = socketServer(server);
   var members = Object.create(null);
-  
+
   return {
     start: startChat
   };
-  
+
   function startChat () {
-    io.on('connection', function (socket) {
-      var addedUser = false;
+    io.on('connection', socketioJwt.authorize({
+        secret: process.env.JWT_SECRET,
+        timeout: 10000 // 10 seconds to send the 'authenticate' message
+      }))
+      .on('authenticated', function (socket) {
+        var user = socket.decoded_token;
+        var userId = user.id;
 
-      // when the client emits 'new message', this listens and executes
-      socket.on('newMessage', function (params) {
-        messageService.create(params).then(function (message) {
-          // we tell the client to execute 'messageAdded'
-          socket.broadcast.emit('messageAdded', message);
-        });
-      });
+        debug(user.username, 'authenticated');
 
-      // when the client emits 'join', this listens and executes
-      socket.on('joinChannel', function (identity) {
-        if (addedUser) return;
-
-        members[socket.id] = identity;
-
-        addedUser = true;
-        socket.emit('joinedChannel', {
-          members: Object.keys(members).map(function (sid) {
-            return {
-              sid: sid,
-              identity: members[sid]
-            };
-          })
-        });
+        users.setIsOnline(userId, true);
+        members[userId] = socket.id;
 
         // echo globally (all clients) that a person has connected
-        socket.broadcast.emit('memberJoined', {
-          sid: socket.id,
-          identity: identity
+        socket.broadcast.emit('member connected', {
+          member: user
+        });
+
+        socket.on('join channel', function (params) {
+          debug(user.username, 'joined', params.channelId);
+          socket.join(params.channelId);
+        });
+
+        socket.on('leave channel', function (params) {
+          debug(user.username, 'left', params.channelId);
+          socket.leave(params.channelId);
+        });
+
+        socket.on('post message', function (params) {
+          debug(user.username, 'posted message');
+          var props = {
+            body: params.body,
+            channelId: params.channelId,
+            author: user.username
+          };
+
+          messages.create(props).then(function (message) {
+            // tell all the clients in a channel to execute 'message posted'
+            socket.broadcast.to(params.channelId).emit('message posted', message);
+          });
+        });
+
+        socket.on('add members', function (params) {
+          debug(user.username, 'adds members', params);
+          var channelId = params.channelId;
+          var memberIds = params.memberIds;
+
+          channels.get(channelId)
+            .then(function (channel) {
+              // TODO check that requesting user is a member of given channel
+
+              channels.addMembers(channelId, memberIds)
+                .then(function () {
+                  var invitation = {
+                    channelId: channelId,
+                    channelName: channel.name,
+                    channelKey: escape(params.channelKey),
+                    addedBy: user.username
+                  };
+
+                  debug('channel members added. notifying...');
+                  memberIds.forEach(function (memberId) {
+                    if (memberId in members) {
+                      io.to(members[memberId]).emit('added to channel', invitation);
+                    }
+                  })
+                });
+            });
+        });
+
+        // when the user disconnects.. perform this
+        socket.on('disconnect', function () {
+          debug(user.username, 'disconnected');
+          if (userId in members) {
+
+            users.setIsOnline(userId, false);
+            delete members[userId];
+
+            // echo globally that this client has left
+            socket.broadcast.emit('member disconnected', {
+              member: user
+            });
+          }
         });
       });
-
-      // when the user disconnects.. perform this
-      socket.on('disconnect', function () {
-        if (addedUser) {
-
-          // echo globally that this client has left
-          socket.broadcast.emit('memberLeft', {
-            sid: socket.id,
-            identity: members[socket.id]
-          });
-
-          delete members[socket.id];
-        }
-      });
-    });
   }
 }
 
