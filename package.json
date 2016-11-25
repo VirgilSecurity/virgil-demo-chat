@@ -6,10 +6,12 @@
   "license": "MIT",
   "scripts": {
     "start": "tsc -p ./client && cd server && node server.js",
-    "postinstall": "typings install",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "typings": "typings"
+  },
+  "engines": {
+    "node": "5.9.1"
   },
   "dependencies": {
     "app-controller": "^0.4.0",
