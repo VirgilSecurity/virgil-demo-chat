@@ -1,0 +1,237 @@
+<html>
+<head>
+  <base href="/">
+  <title>Virgil + DynamoDB Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" type="text/css" href="/assets/semantic/semantic.min.css">
+
+  <script src="/assets/jquery/dist/jquery.min.js"></script>
+  <script src="/assets/semantic/semantic.min.js"></script>
+
+  <script src="/assets/socket.io-client/socket.io.js"></script>
+  <script src="https://cdn.virgilsecurity.com/packages/javascript/sdk_beta/4.0.0-beta.5/virgil-sdk.min.js"
+          integrity="sha256-7GjzXPYP9XsmXBUWnCaDfAFuP1Yi39Rli9e6eu3/Dkk="
+          crossorigin="anonymous">
+  </script>
+</head>
+<body>
+
+<script>
+
+  function testRegistration (username) {
+    register(username, function (err, account) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      storeAccount(account);
+    });
+  }
+
+  function testLogin (username) {
+    login(username, function (err, data) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      console.log(data.token);
+    });
+  }
+
+  function testGetChannels () {
+    getChannels(function (err, channels) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(channels);
+      }
+    })
+  }
+
+  function testCreateChannel (channelName) {
+    createChannel(channelName, function (err, channel) {
+      if (err) {
+        console.log(err);
+      } else {
+        storeChannel(channel);
+        console.log('Channel created');
+      }
+    });
+  }
+
+  function register (username, cb) {
+    var keyPair = virgil.crypto.generateKeys();
+    var cardRequest = createCardRequest(username, 'chat_member', keyPair);
+
+    postJSON('/users/register', { card_request: cardRequest.export() }, function (err, data) {
+      if (err) {
+        cb(err);
+      } else {
+        cb(null, Object.assign({}, data, { username: username, keys: keyPair }));
+      }
+    });
+  }
+
+  function login (username, cb) {
+    postJSON('/users/login', { username: username }, function (err, data) {
+      if (err) {
+        cb &&cb(err);
+      } else {
+        $.ajaxSetup({
+          headers: {
+            'Authorization': 'Bearer ' + data.token
+          }
+        });
+        console.log('DOne');
+        cb &&cb(null, data);
+      }
+    })
+  }
+
+  function getChannels (cb) {
+    getJSON('/channels', cb);
+  }
+
+  function createChannel (name, cb) {
+    var channelKeys = virgil.crypto.generateKeys();
+    var channelCardRequest = createCardRequest(name, 'chat_channel', channelKeys);
+
+    postJSON('/channels', { card_request: channelCardRequest.export() }, function (err, channel) {
+      if (err) {
+        cb(err);
+      } else {
+        cb(null, Object.assign({}, channel, { keys: channelKeys }));
+      }
+    })
+  }
+
+  var socket;
+  function connectToChat (username) {
+    login(username, function (err, data) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      var token = data.token;
+      socket = io.connect();
+      socket.on('connect', function () {
+        socket.emit('authenticate', { token: token })
+          .on('authenticated', function () {
+            console.log('authentiated!');
+          })
+          .on('unauthorized', function (msg) {
+            console.log('unauthorized:' + JSON.stringify(msg.data));
+          });
+      })
+      .on('message posted', function (msg) {
+        console.log(JSON.stringify(msg));
+      })
+      .on('added to channel', function (invite) {
+        socket.emit('join channel', { channelId: invite.channelId });
+      });
+    })
+  }
+
+  function joinChannel (channelId) {
+    socket.emit('join channel', { channelId: channelId });
+  }
+
+  // UTILS
+
+  function storeAccount (account) {
+    var stored = Object.assign({}, account);
+    stored.keys = serializeKeyPair(stored.keys);
+    localStorage.setItem('account_v2', JSON.stringify(stored));
+  }
+
+  function loadAccount () {
+    var accountJson = localStorage.getItem('account_v2');
+    var account = JSON.parse(accountJson);
+    account.keys = deserializeKeyPair(account.keys);
+
+    return account;
+  }
+
+  function storeChannel (channel) {
+    var stored = Object.assign({}, channel);
+    stored.keys = serializeKeyPair(stored.keys);
+    localStorage.setItem(channel.name, JSON.stringify(stored));
+  }
+
+  function loadChannel (channelName) {
+    var channelJson = localStorage.getItem(channelName);
+    var channel = JSON.parse(channelJson);
+    channel.keys = deserializeKeyPair(channel.keys);
+
+    return channel;
+  }
+
+  function serializeKeyPair (keys) {
+    return {
+      privateKey: virgil.crypto.exportPrivateKey(keys.privateKey).toString('base64'),
+      publicKey: virgil.crypto.exportPublicKey(keys.publicKey).toString('base64')
+    };
+  }
+
+  function deserializeKeyPair (keys) {
+    return {
+      privateKey: virgil.crypto.importPrivateKey(new virgil.Buffer(keys.privateKey, 'base64')),
+      publicKey: virgil.crypto.importPublicKey(new virgil.Buffer(keys.publicKey, 'base64'))
+    };
+  }
+
+  function createCardRequest (identity, identityType, keyPair) {
+    var rawPublicKey = virgil.crypto.exportPublicKey(keyPair.publicKey);
+
+    var request = virgil.createCardRequest({
+      identity: identity,
+      identity_type: identityType,
+      scope: 'application',
+      public_key: rawPublicKey
+    });
+
+    var signer = virgil.requestSigner(virgil.crypto);
+    signer.selfSign(request, keyPair.privateKey);
+    return request;
+  }
+
+  function postJSON (url, data, cb) {
+    return $.ajax({
+      url: url,
+      method: 'POST',
+      data: JSON.stringify(data),
+      dataType: 'json',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      success: function (data) {
+        cb(null, data);
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        cb(xhr.responseJSON || errorThrown, null);
+      }
+    });
+  }
+
+  function getJSON (url, cb) {
+    return $.ajax({
+      url: url,
+      method: 'GET',
+      dataType: 'json',
+      success: function (data) {
+        cb(null, data);
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        cb(xhr.responseJSON || errorThrown, null);
+      }
+    });
+  }
+
+</script>
+</body>
+</html>

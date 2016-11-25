@@ -23,7 +23,7 @@ The first thing we need to do is grab all the necessary information from our Vir
 
 ## Local development
 
-To run the server locally clone the repository switch to `dynamodb` directory and run the following commands:
+To run the server locally clone the repository switch to repository root directory and run the following commands:
 
 ```shell
 npm install

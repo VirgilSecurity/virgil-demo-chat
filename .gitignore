@@ -1,11 +1,8 @@
 *.pem
 node_modules
-dynamodb/public/assets/js/app/*
+public/assets/js/app/*
 typings
 client/**/*.js
 client/**/*.js.map
 .env
-.virgilpass
 .virgilkey
-.virgilcard
-.vkeys

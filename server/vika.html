@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="utf-8" />
+  <script src="https://cdn.virgilsecurity.com/packages/javascript/sdk_beta/4.0.0-beta.5/virgil-sdk.min.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div id="card"></div>
+<div id="keyPair"></div>
+<script>
+  var keyPair = virgil.crypto.generateKeys();
+  document.getElementById("keyPair").innerHTML = JSON.stringify(keyPair);
+
+  var client = virgil.client("AT.2ad342bbdfc1c27e991df2f5255692b9901958da9ad24929609a62f54336957f");
+  var cardId = "a7c6cb4fd800a3f2187d5e342f16a2c04b343a1912c8b0b6069e618096f645fb";
+  client.getCard(cardId).then(function (card) {
+      document.getElementById("card").innerHTML = JSON.stringify(card);
+    }
+  );
+</script>
+</body>
+</html>
