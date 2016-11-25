@@ -46,19 +46,15 @@ function getChannel (req, res) {
     .then(function (channel) {
       if (!channel) {
         res.status(404).json({ error: 'Channel with given id not found.' });
-      } else if (!isChannelMember(channel, req.user.id)) {
+      } else if (!channels.isChannelMember(channel, req.user.id)) {
         res.status(403).json({ error: 'Only channel members are allowed access.' });
       } else {
         res.json(transformResponse(channel));
       }
     })
     .catch(function (err) {
-      errorHandler(res, err, 'Failed to get channel by Id.');
+      errorHandler(res, err, 'Failed to get channel.');
     })
-}
-
-function isChannelMember (channel, userId) {
-  return channel.isPublic || channel.members.values.indexOf(userId) > -1;
 }
 
 function transformResponse (channel) {

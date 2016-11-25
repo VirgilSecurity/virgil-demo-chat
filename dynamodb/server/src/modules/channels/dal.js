@@ -103,9 +103,17 @@ function getChannel (channelId) {
   });
 }
 
+/**
+ * Check whether the user with given Id is channel member
+ * */
+function isChannelMember (channel, userId) {
+  return channel.isPublic || channel.members.values.indexOf(userId) > -1;
+}
+
 module.exports = {
   create: create,
   get: getChannel,
   addMembers: addMembers,
-  queryByMember: queryByMember
+  queryByMember: queryByMember,
+  isChannelMember: isChannelMember
 };
