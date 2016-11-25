@@ -11,17 +11,17 @@ var log = require('./src/providers/log');
 var router = require('./src/routes');
 var chat = require('./src/modules/chat')(server);
 
-var rootDir = path.resolve(__dirname + '/../');
+// var rootDir = path.resolve(__dirname + '/../');
 
 app.disable('x-powered-by');
 
 app.use(bodyParser.json());
-app.use(express.static(rootDir + '/public/'));
-app.use('/assets/', express.static(rootDir + '/node_modules/'));
+// app.use(express.static(rootDir + '/public/'));
+// app.use('/assets/', express.static(rootDir + '/node_modules/'));
 
-app.get('/', function indexHandler(req, res) {
-    res.sendFile(__dirname + '/index.html');
-});
+// app.get('/', function indexHandler(req, res) {
+//     res.sendFile(__dirname + '/index.html');
+// });
 
 app.use(router);
 
