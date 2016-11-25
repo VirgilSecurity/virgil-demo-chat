@@ -5,7 +5,7 @@
   "description": "Web chat app with E2EE",
   "license": "MIT",
   "scripts": {
-    "start": "tsc -p ./client && cd server && node server.js",
+    "start": "node server/server.js",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "typings": "typings"
