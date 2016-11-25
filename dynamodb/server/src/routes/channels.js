@@ -2,10 +2,9 @@
 
 var router = require('express').Router();
 var jwt = require('express-jwt');
-var escape = require('escape-html');
 var virgil = require('../providers/virgil');
-var log = require('../providers/log');
 var channels = require('../modules/channels');
+var errorHandler = require('../utils/error-handler');
 
 router.post('/channels', jwt({ secret: process.env.JWT_SECRET }), createChannel);
 router.get('/channels', jwt({ secret: process.env.JWT_SECRET }), getChannels);
@@ -28,8 +27,7 @@ function createChannel (req, res) {
       res.json(transformResponse(channel));
     })
     .catch(function (err) {
-      log.error(err);
-      res.status(400).json({ error: err.message });
+      errorHandler(res, err, 'Failed to create new channel.');
     });
 }
 
@@ -39,28 +37,28 @@ function getChannels (req, res) {
       res.json(results.map(transformResponse));
     })
     .catch(function (err) {
-      log.error(err);
-      res.status(400).json({ error: err.message });
+      errorHandler(res, err, 'Failed to get channels.');
     });
 }
 
 function getChannel (req, res) {
   channels.get(req.params.channel_id)
     .then(function (channel) {
-      if (!isChannelMember(channel, req.user.id)) {
-        res.status(403).json({ error: 'You must be a member of the channel to get it.' });
+      if (!channel) {
+        res.status(404).json({ error: 'Channel with given id not found.' });
+      } else if (!isChannelMember(channel, req.user.id)) {
+        res.status(403).json({ error: 'Only channel members are allowed access.' });
       } else {
         res.json(transformResponse(channel));
       }
     })
     .catch(function (err) {
-      log.error(err);
-      res.status(404).json({ error: 'Channel with given Id not found.' });
+      errorHandler(res, err, 'Failed to get channel by Id.');
     })
 }
 
 function isChannelMember (channel, userId) {
-  return channel.isPublic || channel.members.indexOf(userId) > -1;
+  return channel.isPublic || channel.members.values.indexOf(userId) > -1;
 }
 
 function transformResponse (channel) {

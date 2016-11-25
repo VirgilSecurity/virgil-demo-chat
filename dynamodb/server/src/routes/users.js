@@ -7,6 +7,7 @@ var jwt = require('jsonwebtoken');
 var requireAuth = require('express-jwt');
 var virgil = require('../providers/virgil');
 var users = require('../modules/users');
+var errorHandler = require('../utils/error-handler');
 
 router.post('/users/login', login);
 router.post('/users/register', register);
@@ -27,7 +28,7 @@ function register (req, res) {
       res.json({ token: token });
     })
     .catch(function (err) {
-      res.status(400).json({ error: err.message });
+      errorHandler(res, err, 'Failed to create new user.');
     });
 }
 
@@ -44,7 +45,7 @@ function login (req, res) {
       }
     })
     .catch(function (err) {
-      res.status(400).json({ error: err.message });
+      errorHandler(res, err, 'Failed to log in.');
     });
 }
 
@@ -55,7 +56,7 @@ function search (req, res) {
       res.json(found.map(transformResponse));
     })
     .catch(function (err) {
-      res.status(400).json({ error: err.message });
+      errorHandler(res, err, 'Failed to get users.');
     });
 }
 

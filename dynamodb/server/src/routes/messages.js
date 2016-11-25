@@ -1,8 +1,8 @@
 var router = require('express').Router();
 var jwt = require('express-jwt');
 var virgil = require('../providers/virgil');
-var log = require('../providers/log');
 var messages = require('../modules/messages');
+var errorHandler = require('../utils/error-handler');
 
 router.get('/channels/:channel_id/messages', jwt({ secret: process.env.JWT_SECRET }), getMessages);
 
@@ -16,7 +16,7 @@ function getMessages (req, res) {
       res.json(results);
     })
     .catch(function (err) {
-      res.status(400).json({ error: err.message });
+      errorHandler(res, err, 'Failed to get channels.');
     });
 }
 

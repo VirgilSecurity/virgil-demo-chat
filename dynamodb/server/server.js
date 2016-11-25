@@ -25,9 +25,13 @@ app.get('/', function indexHandler(req, res) {
 
 app.use(router);
 
-app.use(function (error, request, response, next) {
-  log.error('application error', error, error.stack);
-  response.status(500).json({error: 'internal error'});
+app.use(function (err, req, res, next) {
+  log.error('application error', err, err.stack);
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ error: 'Invalid token' });
+  } else {
+    res.status(500).json({ error: 'Internal error' });
+  }
 });
 
 server.listen(config.app.port, function () {
