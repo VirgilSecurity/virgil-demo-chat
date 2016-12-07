@@ -34,7 +34,7 @@
     "socket.io-client": "^1.5.1",
     "socketio-jwt": "^4.5.0",
     "uuid": "^2.0.3",
-    "virgil-sdk": "^4.0.0-beta.3",
+    "virgil-sdk": "^4.0.0-beta.5",
     "winston": "^2.1.1"
   },
   "devDependencies": {
