@@ -77,9 +77,8 @@ function search (query) {
   };
 
   if (_.isString(query) && !_.isEmpty(query)) {
-    params.KeyConditionExpression = 'begins_with(#uname, :query)';
+    params.FilterExpression += ' AND begins_with(#uname,:query)';
     params.ExpressionAttributeValues[':query'] = query;
-    return dbUtils.queryTable(params);
   }
 
   return dbUtils.scanTable(params);
