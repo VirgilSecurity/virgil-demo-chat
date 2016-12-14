@@ -192,7 +192,7 @@ GET /channels/:channel_id/messages
     "id": "744958df-4460-40a6-83f5-340ae67fc9e1",
     "author": "username",
     "body": "Uar6bQNzJT87vToBXHOlQWamBpkYDbtV651pW/9rLAmsjPy4e0ZG4vIcakXUVFk0y4MkmXYZ/B6jdTkKJWryWQ==",
-    "dateCreated": 1479919943234
+    "dateCreated": 1479919943234,
     "channelId": "aab5d92b-6a38-4785-b57f-b6ab46cf9108"
   }
 ]
