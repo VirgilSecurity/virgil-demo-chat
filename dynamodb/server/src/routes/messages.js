@@ -17,13 +17,20 @@ function getMessages (req, res) {
         res.status(403).json({ error: 'Only channel members are allowed access.' });
       } else {
         return messages.queryByChannel(channelId).then(function (results) {
-            res.json(results);
+            res.json(results.map(transformMessage));
           });
       }
     })
     .catch(function (err) {
       errorHandler(res, err, 'Failed to get messages.');
     });
+}
+
+function transformMessage (msg) {
+  if (Buffer.isBuffer(msg.body)) {
+    msg.body = msg.body.toString('base64');
+  }
+  return msg;
 }
 
 module.exports = router;
