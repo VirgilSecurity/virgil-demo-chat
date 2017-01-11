@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Virgil + DynamoDB Demo</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_nickname">Nickname</string>
+    <string name="nickname_description">This Nickname used to register your public key on our service.</string>
+    <string name="action_sign_in">Start</string>
+    <string name="error_invalid_nickname">This nickname is invalid</string>
+    <string name="error_field_required">This field is required</string>
+
+    <string name="action_create_channel">Create channel</string>
+    <string name="action_leave_channel">Leave channel</string>
+    <string name="action_close">Close App</string>
+    <string name="send">Send</string>
+    <string name="channels">Channels</string>
+
+    <string name="dialog_create_channel">Create channel</string>
+    <string name="dialog_leave_channel">Leave channel</string>
+    <string name="dialog_leave_channel_message">Leave this channel?</string>
+
+    <string name="error_channel_not_found">Channel not found</string>
+    <string name="virgil_access_token">Access token</string>
+    <string name="virgil_app_bundle_id">Virgil App bundle ID</string>
+    <string name="base_url">DynamoDB chat base URL</string>
+    <string name="loading">Loading...</string>
+    <string name="virgil_token">Virgil App access token</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="message_active_channel_leaved">You leaved the active channel. Switching to random channel</string>
+    <string name="virgil_app_private_key">Application private key</string>
+    <string name="virgil_app_private_key_password">Application private key password</string>
+    <string name="virgil_app_id">Virgil App ID</string>
+    <string name="action_add_member">Add member</string>
+    <string name="invite_members">Invite members</string>
+
+</resources>

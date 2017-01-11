@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="base_url"
+        android:title="@string/base_url"
+        android:defaultValue="https://virgil-demo-chat.herokuapp.com"/>
+
+    <EditTextPreference
+        android:key="virgil_app_id"
+        android:title="@string/virgil_app_id"
+        android:defaultValue="327cf378da3281c02ab72a89dfa7985e469a85eab1edb5e0d59a18f5491da39d"/>
+
+    <EditTextPreference
+        android:key="virgil_app_private_key"
+        android:title="@string/virgil_app_private_key"
+        android:defaultValue="MIGhMF0GCSqGSIb3DQEFDTBQMC8GCSqGSIb3DQEFDDAiBBDwi2ZVi79RxRhqmcVpFWb0AgIU2jAKBggqhkiG9w0CCjAdBglghkgBZQMEASoEEHCQepqg+DlyonHB8yZiLrAEQG8xDya3lQi+mAj7HMxf4StcxRRMcn5mbvFUvAybLG2qSumzeSb+0bXa8q7e9+xlcnw/TdI2Lc5nV8fHgpRhKFQ=" />
+
+    <EditTextPreference
+        android:key="virgil_app_private_key_password"
+        android:title="@string/virgil_app_private_key_password"
+        android:defaultValue="z13x24" />
+
+    <EditTextPreference
+        android:key="virgil_token"
+        android:title="@string/virgil_token"
+        android:defaultValue="AT.4325b5ddbcc4cfd85a54b1b09c56ff103759409139316c72fa0b0d6c5767cf41"/>
+
+</PreferenceScreen>
